@@ -10,6 +10,8 @@ loaded_model = load("random_forest_model.joblib")
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    prediction=None
+
     if request.method == "POST":
         # Get input data from the form
         CropType = request.form["CropType"]
@@ -29,13 +31,12 @@ def index():
 
         # Make predictions
         predictions = loaded_model.predict(new_data)
-        probability = loaded_model.predict_proba(new_data)[:,1]
 
-        # Render template with predictions
-        return render_template("result.html", prediction=predictions[0], probability=probability[0])
+        # Assign prediction
+        prediction = predictions[0]
 
-    # Render the form
-    return render_template("form.html")
+    # Render the form template with prediction value embedded
+    return render_template("form.html", prediction=prediction)
 
 if __name__ == "__main__":
     app.run(debug=True)
